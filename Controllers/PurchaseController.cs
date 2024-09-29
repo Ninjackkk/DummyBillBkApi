@@ -53,8 +53,6 @@ namespace BillBookApi.Controllers
             return Ok(items);
         }
 
-
-
         //Getting parties for party dropdwon
         [HttpGet]
         [Route("GetAllParties")]
@@ -64,7 +62,7 @@ namespace BillBookApi.Controllers
            return Ok(parties);
         }
 
-        //Api working , fetching at consuming side is remaining
+        //Api working , fetching at consuming side is remaining for dynamically reflecting quantity
 
         [HttpGet]
         [Route("GetPartyStocksByBusinessId/{businessId}/{purchaseOrderId}")]
@@ -73,6 +71,38 @@ namespace BillBookApi.Controllers
             var mystock = db.MyStocks.FromSqlRaw("EXEC GetMyStocks @BusinessId = {0}, @PurchaseOrderId = {1}", businessId, purchaseOrderId).ToList();
             return Ok(mystock);
         }
+
+
+
+        [HttpGet]
+        [Route("GetAllPurchaseOrders")]
+        public IActionResult GetAllPurchaseOrders()
+        {
+            var Allpurchaseorders=db.PurchaseOrders.ToList();
+            return Ok(Allpurchaseorders);
+        }
+
+
+        [HttpGet]
+        [Route("GetAllPurchaseOrderById")]
+        public IActionResult GetAllPurchaseOrderById(int PID)
+        {
+            var purchaseRequest = new PurchaseRequest();
+            //using .AsEnumerable() cause its showing some composable error , tried multiple ways 
+            purchaseRequest.PurchaseOrder = db.PurchaseOrders
+                .FromSqlRaw("EXEC FetchPOWithID @PurchaseOrderId = {0}", PID)
+                .AsEnumerable().SingleOrDefault(); 
+
+            purchaseRequest.Stocks = db.MyStocks
+                .FromSqlRaw("EXEC FetchStocksWithID @PurchaseOrderId = {0}", PID)
+                .AsEnumerable().ToList();          
+
+            return Ok(purchaseRequest);
+        }
+
+
+
+
 
 
     }
