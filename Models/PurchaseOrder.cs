@@ -12,7 +12,6 @@ namespace BillBookApi.Models
         public string? PartyName { get; set; }
         public double? Amount { get; set; }
         public DateTime? ValidTill { get; set; }
-
         public string? Status {  get; set; }
        
     }

@@ -16,5 +16,10 @@ namespace BillBookApi.Data
         public DbSet<Inventories> Inventories { get; set; }
 
         public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Parties> Parties { get; set; }
+
+        public DbSet<Businesses> Businesses { get; set; }
+
     }
 }
