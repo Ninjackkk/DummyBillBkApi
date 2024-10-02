@@ -103,6 +103,31 @@ namespace BillBookApi.Controllers
 
 
 
+        [HttpPost]
+        [Route("SubmitPayment")]
+        public async Task<IActionResult> SubmitPayment([FromBody] PaymentRequest paymentRequest)
+        {
+            if (paymentRequest == null || string.IsNullOrEmpty(paymentRequest.PaymentMethod))
+            {
+                return BadRequest("Invalid payment request.");
+            }
+
+            var purchaseOrder = await db.PurchaseOrders.FindAsync(paymentRequest.PurchaseOrderId);
+            if (purchaseOrder == null)
+            {
+                return NotFound("Purchase order not found.");
+            }
+
+            // Update the status of the purchase order
+            purchaseOrder.Status = "Paid";
+            await db.SaveChangesAsync(); // Save changes to the database
+
+            return Ok(new { Message = "Payment processed successfully." });
+        }
+
+
+
+
 
 
     }
